@@ -102,3 +102,40 @@ export function sortRecords(records, property) {
   });
 }
 
+
+
+/*
+ * Takes a list of books.
+ * Returns the number of books and total minutes.
+ * Does not change the original list.
+ */
+export function summarizeRecords(records) {
+  const totalMinutes = records.reduce(
+    (total, book) => total + book.minutes,
+    0
+  );
+
+  return {
+    count: records.length,
+    totalMinutes: totalMinutes
+  };
+}
+
+
+
+/*
+ * Takes a list of books and a search word.
+ * Returns matching books and their summary.
+ * Does not change the original list.
+ */
+export function buildReport(records, query) {
+  const matches = searchRecords(records, query);
+  const sorted = sortRecords(matches, "minutes");
+  const summary = summarizeRecords(sorted);
+
+  return {
+    books: sorted,
+    summary: summary
+  };
+}
+

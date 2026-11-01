@@ -5,7 +5,9 @@ import {
   normalizeRecord,
   filterRecords,
   searchRecords,
-  sortRecords
+  sortRecords,
+  summarizeRecords,
+  buildReport
 } from "./toolkit.js";
 
 // Compare expected and actual results
@@ -132,6 +134,68 @@ check(
   originalBooks,
   JSON.stringify(sortBooks)
 );
+
+
+// Test 10: Count books and add minutes
+check(
+  "Summarize books",
+  { count: 3, totalMinutes: 150 },
+  summarizeRecords(sortBooks)
+);
+
+// Test 11: Empty list
+check(
+  "Empty list summary",
+  { count: 0, totalMinutes: 0 },
+  summarizeRecords([])
+);
+
+
+// Test 12: Build a report
+const reportBooks = [
+  { title: "Robot Garden", creator: "Mina", minutes: 120 },
+  { title: "Robot World", creator: "Alex", minutes: 60 },
+  { title: "Color Book", creator: "Sam", minutes: 30 }
+];
+
+check(
+  "Build book report",
+  {
+    books: [
+      { title: "Robot World", creator: "Alex", minutes: 60 },
+      { title: "Robot Garden", creator: "Mina", minutes: 120 }
+    ],
+    summary: { count: 2, totalMinutes: 180 }
+  },
+  buildReport(reportBooks, "robot")
+);
+
+
+
+import books from "./data/books.json" with { type: "json" };
+
+// Test 13: Check all 8 books
+check(
+  "Real dataset book count",
+  8,
+  books.length
+);
+
+// Test 14: Total reading minutes
+check(
+  "Real dataset summary",
+  { count: 8, totalMinutes: 1410 },
+  summarizeRecords(books)
+);
+
+// Test 15: Search real books
+check(
+  "Search Robot Garden",
+  ["Robot Garden"],
+  searchRecords(books, "robot").map(book => book.title)
+);
+
+
 
 
 
