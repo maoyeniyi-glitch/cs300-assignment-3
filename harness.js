@@ -1,11 +1,63 @@
-// Assignment 3: verification harness. Run it with: node harness.js
-//
-// 1. Import your functions from "./toolkit.js" and load your scenario's dataset from data/.
-// 2. Write at least 12 named cases: normal inputs plus the five edge cases
-//    (empty array, missing property, invalid number or wrong type,
-//    different capitalization, equal values when sorting) and a nonmutation check.
-// 3. Each case prints its name, the expected result, the actual result,
-//    and the word PASS or FAIL, for example:
-//    PASS  search ignores capitalization  expected: 1  actual: 1
-// 4. Work out each expected result from the data before you run the case.
-console.log("Starter ready. Implement the operations and your checks before claiming any pass.");
+
+import { validateRecord, normalizeRecord } from "./toolkit.js";// Compare the expected and actual results.
+function check(name, expected, actual) {
+  const result = JSON.stringify(expected) === JSON.stringify(actual)
+    ? "PASS"
+    : "FAIL";
+
+  console.log(`${result} ${name}`);
+  console.log("Expected:", JSON.stringify(expected));
+  console.log("Actual:", JSON.stringify(actual));
+}
+
+// Test 1: A book without a title
+const book = {
+  id: 1,
+  minutes: 30
+};
+
+check(
+  "Missing title",
+  { valid: false, errors: ["title is required"] },
+  validateRecord(book)
+);
+
+
+
+ // Test 2: A book with invalid minutes
+const invalidBook = {
+  id: 2,
+  title: "Robot Garden",
+  minutes: "thirty"
+};
+
+check(
+  "Invalid minutes",
+  { valid: false, errors: ["minutes must be a number"] },
+  validateRecord(invalidBook)
+);
+
+
+ // Test 3: Remove extra spaces
+const messyBook = {
+  id: 3,
+  title: "  Robot Garden  ",
+  creator: "  Mina Reed  ",
+  category: "  Science  ",
+  minutes: 120,
+  description: "  A book about robots  "
+};
+
+check(
+  "Normalize book",
+  "Robot Garden",
+  normalizeRecord(messyBook).title
+);
+
+// Test 4: Make sure the original book stays the same
+check(
+  "Original book unchanged",
+  "  Robot Garden  ",
+  messyBook.title
+);
+
