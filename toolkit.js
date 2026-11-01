@@ -58,3 +58,47 @@ export function normalizeRecord(record) {
     description: record.description.trim()
   };
 }
+
+
+/*
+ * Takes a list of books and a condition.
+ * Returns only the books that match.
+ * Does not change the original list.
+ */
+export function filterRecords(records, condition) {
+  return records.filter(condition);
+}
+
+
+
+/*
+ * Takes a list of books and a search word.
+ * Returns books that match the title or creator.
+ * Ignores capital letters and does not change the list.
+ */
+export function searchRecords(records, query) {
+  const word = String(query).toLowerCase();
+
+  return records.filter((book) =>
+    String(book.title ?? "").toLowerCase().includes(word) ||
+    String(book.creator ?? "").toLowerCase().includes(word)
+  );
+}
+
+
+
+/*
+ * Takes a list of books and a property.
+ * Returns a new sorted list.
+ * Does not change the original list.
+ * Equal minutes are sorted by title.
+ */
+export function sortRecords(records, property) {
+  return [...records].sort((a, b) => {
+    if (a[property] < b[property]) return -1;
+    if (a[property] > b[property]) return 1;
+
+    return String(a.title).localeCompare(String(b.title));
+  });
+}
+

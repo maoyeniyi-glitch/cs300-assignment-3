@@ -1,5 +1,14 @@
 
-import { validateRecord, normalizeRecord } from "./toolkit.js";// Compare the expected and actual results.
+
+import {
+  validateRecord,
+  normalizeRecord,
+  filterRecords,
+  searchRecords,
+  sortRecords
+} from "./toolkit.js";
+
+// Compare expected and actual results
 function check(name, expected, actual) {
   const result = JSON.stringify(expected) === JSON.stringify(actual)
     ? "PASS"
@@ -9,6 +18,7 @@ function check(name, expected, actual) {
   console.log("Expected:", JSON.stringify(expected));
   console.log("Actual:", JSON.stringify(actual));
 }
+
 
 // Test 1: A book without a title
 const book = {
@@ -60,4 +70,69 @@ check(
   "  Robot Garden  ",
   messyBook.title
 );
+
+
+ // Test 5: Filter books by category
+const testBooks = [
+  { title: "Robot Garden", category: "Science" },
+  { title: "Color World", category: "Art" },
+  { title: "Space Trip", category: "Science" }
+];
+
+check(
+  "Filter Science books",
+  ["Robot Garden", "Space Trip"],
+  filterRecords(testBooks, (book) => book.category === "Science")
+    .map((book) => book.title)
+);
+
+
+// Test 6: Search ignores capital letters
+const searchBooks = [
+  { title: "Robot Garden", creator: "Mina Reed" },
+  { title: "Color World", creator: "Alex Brown" }
+];
+
+check(
+  "Search ignores capitalization",
+  ["Robot Garden"],
+  searchRecords(searchBooks, "ROBOT").map((book) => book.title)
+);
+
+// Test 7: Search by creator
+check(
+  "Search by creator",
+  ["Robot Garden"],
+  searchRecords(searchBooks, "mina").map((book) => book.title)
+);
+
+
+// Test 8: Sort books by minutes
+const sortBooks = [
+  { title: "Zebra Book", minutes: 60 },
+  { title: "Apple Book", minutes: 30 },
+  { title: "Banana Book", minutes: 60 }
+];
+
+check(
+  "Sort books by minutes",
+  ["Apple Book", "Banana Book", "Zebra Book"],
+  sortRecords(sortBooks, "minutes").map((book) => book.title)
+);
+
+
+
+ // Test 9: Make sure sorting doesn't change the original
+const originalBooks = JSON.stringify(sortBooks);
+
+sortRecords(sortBooks, "minutes");
+
+check(
+  "Sorting does not change original",
+  originalBooks,
+  JSON.stringify(sortBooks)
+);
+
+
+
 
